@@ -1,186 +1,164 @@
-package com.binaryTree;
+package BinaryTree;
 
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Scanner;
 
+import org.w3c.dom.Node;
+
 public class BinaryTree {
-
-    Node root;
-
-    public static BinaryTree fromInPre(int[] in, int[] pre) {
-        BinaryTree tree = new BinaryTree();
-        tree.root = new Node();
-        fromInPre(tree.root, in, pre);
-        return tree;
-
-    }
-
-    private static void fromInPre(Node node, int[] in,int[] pre){
-        node.data = pre[0];
-        int point = findIndex(in,pre[0]);
-
-        int[] firstIn = Arrays.copyOfRange(in,0,point);
-        int[] secondIn = Arrays.copyOfRange(in,point+1, in.length);
-
-        int[] firstPre = Arrays.copyOfRange(pre, 1, point+1);
-        int[] secondPre = Arrays.copyOfRange(pre, point+1, pre.length);
-
-        if(firstIn.length!=0){
-            node.left = new Node();
-            fromInPre(node.left, firstIn, firstPre);
-        }
-        if(secondIn.length != 0){
-            node.right = new Node();
-            fromInPre(node.right, secondIn, secondPre);
-        }
-    }
-    private static int findIndex(int[] arr,int value){
-        for (int i = 0; i < arr.length; i++) {
-            if(arr[i] == value)
-                return i;
-        }
-        return -1;
-    }
-
-    public static BinaryTree fromInPost(int[] in, int[] post){
-        BinaryTree tree = new BinaryTree();
-        tree.root = new Node();
-        fromInPost(tree.root, in, post);
-        return tree;
-    }
-
-    private static void fromInPost(Node node, int[] in, int[] post) {
-        node.data = post[post.length-1];
-        int point = findIndex(in, post[post.length-1]);
-
-        int[] firstIn = Arrays.copyOfRange(in,0,point);
-        int[] secondIn = Arrays.copyOfRange(in,point+1, in.length);
-
-        int[] firstPost = Arrays.copyOfRange(post, 0, point);
-        int[] secondPost = Arrays.copyOfRange(post, point, post.length-1);
-
-        if(firstIn.length != 0){
-            node.left = new Node();
-            fromInPost(node.left, firstIn, firstPost);
-        }
-        if(secondIn.length != 0){
-            node.right = new Node();
-            fromInPost(node.right, secondIn, secondPost);
-        }
-    }
-
-
-    public void populate(){
-        Scanner s = new Scanner(System.in);
-        this.root = new Node();
-
-        populate(root,s);
-
-    }
-
-    private void populate(Node node, Scanner s) {
-        System.out.print("Enter value of Node: ");
-        node.data = s.nextInt();
-        System.out.println("Want to enter left Node ?");
-        if(s.nextBoolean()){
-            node.left = new Node();
-            populate(node.left,s);
-        }
-        System.out.println("Want to enter right Node ?");
-        if(s.nextBoolean()){
-            node.right = new Node();
-            populate(node.right,s);
-        }
-
-    }
-
-    public void display(){
-        display(root,"");
-    }
-
-    private void display(Node node, String indent) {
-        if(node == null)
-            return;
-
-        System.out.println(indent+node.data);
-
-        display(node.left,indent+"\t");
-        display(node.right,indent+"\t");
-
-    }
-
-    public boolean find(int data){
-        return find(root,data);
-    }
-
-    private boolean find(Node node, int data) {
-        if(node == null)
-            return false;
-        /*if(node.data == data)
-            return true;*/
-        if((node.data == data) || find(node.left, data) || find(node.right, data)){
-            return true;
-        }
-        return false;
-    }
-
-    public int diameter(){
-        return depth(root.left) + depth(root.right) + 2;
-    }
-    private int depth(Node node){
-        if(node == null)
-            return -1;
-        else
-            return Math.max(depth(node.left), depth(node.right))+ 1;
-    }
-
-    public  void mirrorTree(){
-        mirrorTree(root);
-    }
-    private void mirrorTree(Node node){
-       if(node == null)
-           return;
-
-       Node temp = node.left;
-       node.left = node.right;
-       node.right = temp;
-
-        mirrorTree(node.left);
-        mirrorTree(node.right);
-
-    }
-    public void inOrder(Node node){
-        if(node == null)
-            return;
-
-        inOrder(node.left);
-        System.out.println(node.data);
-        inOrder(node.right);
-    }
-    public void preOrder(Node node){
-        if(node == null)
-            return;
-
-        System.out.println(node.data);
-        preOrder(node.left);
-        preOrder(node.right);
-    }
-    public void postOrder(Node node){
-        if(node == null)
-            return;
-
-        postOrder(node.left);
-        postOrder(node.right);
-        System.out.println(node.data);
-    }
-
-
-
-    private static class Node{
-        private  int data;
-        private Node left;
-        private Node right;
-
-
-    }
+	
+	private class Node{
+		int data;
+		Node left;
+		Node right;
+		
+		public Node(int data,Node left, Node right) {
+			this.data = data;
+			this.left = left;
+			this.right = right;
+		}
+	}
+	private Node root;
+	private int size =0;
+	BinaryTree(){
+		Scanner s = new Scanner(System.in);
+		this.root = takeInput(s,null,false);
+	}
+	private Node takeInput(Scanner s, Node parent, boolean isLeftOrRight) {
+		
+		// left ==true  right == false;
+		
+		if(parent == null) {
+			System.out.println("Enter the data for root node");
+		}else {
+			if(isLeftOrRight) {
+				System.out.println("Enter the data for left child of "+parent.data);
+				
+			}else {
+				System.out.println("Enter the data for right child of "+parent.data);
+			}
+		}
+		
+		int nodeData = s.nextInt();
+		Node node = new Node(nodeData,null,null);
+		this.size++;
+		boolean choice = false;
+		System.out.println("Do you have left child of "+nodeData);
+		choice = s.nextBoolean();
+		
+		if(choice) {
+			node.left = takeInput(s,node,true);
+		}
+		
+		choice = false;
+		System.out.println("Do you have right child of "+nodeData);
+		choice = s.nextBoolean();
+		if(choice) {
+			node.right = takeInput(s,node,false);
+		}
+		
+		return node;
+	}
+	
+	
+	public void display() {
+		this.display(this.root);
+	}
+	private void display(Node node) {
+		String str ="";
+		if(node.left != null)
+			str+= node.left.data+" => ";
+		else
+			str += "END =>";
+		
+		str += node.data;
+		
+		if(node.right != null) 
+			str +=" <= "+ node.right.data;
+		else
+			str += "<= END";
+		
+		System.out.println(str);
+		if(node.left != null)
+			display(node.left);
+		if(node.right != null)
+			display(node.right);
+	}
+	
+	public int height() {
+		return this.height(this.root);
+	}
+	private int height(Node node) {
+		if(node == null)
+			return -1;
+		return Math.max(height(node.left),height(node.right)) + 1;
+	}
+	
+	
+	public void mirrorTree() {
+		mirrorTree(this.root);
+	}
+	private void mirrorTree(Node node) {
+		if(node == null)
+			return;
+		Node temp = node.left;
+		node.left = node.right;
+		node.right = temp;
+		
+		mirrorTree(node.left);
+		mirrorTree(node.right);
+	}
+	
+	// Tree Traversal........
+	public void preOrder() {
+		preOrder(this.root);
+		System.out.println();
+	}
+	private void preOrder(Node node) {
+		if(node == null)
+			return;
+		System.out.print(node.data+" ");
+		preOrder(node.left);
+		preOrder(node.right);
+	}
+	
+	public void postOrder() {
+		postOrder(this.root);
+		System.out.println();
+	}
+	private void postOrder(Node node) {
+		if(node == null)
+			return;
+		postOrder(node.left);
+		postOrder(node.right);
+		System.out.print(node.data+ " ");
+				
+	}
+	
+	public void inOrder() {
+		inOrder(this.root);
+		System.out.println();
+	}
+	private void inOrder(Node node) {
+		
+		if(node == null)
+			return;
+		inOrder(node.left);
+		System.out.print(node.data+" ");
+		inOrder(node.right);
+	}
+	
+	public void levelOrder() {
+		// aka  ==================  BREADTH FIRST SEARCH......
+		LinkedList<Node> queue = new LinkedList<>();
+		queue.add(this.root);
+		while(!queue.isEmpty()) {
+			Node rm = queue.removeFirst();
+			System.out.print(rm.data+" ");
+			if(rm.left != null)
+				queue.addLast(rm.left);
+			if(rm.right != null)
+				queue.addLast(rm.right);
+		}
+	}
 }
