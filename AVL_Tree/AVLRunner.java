@@ -1,14 +1,11 @@
-package AVL_Tree;
-
 public class AVLRunner {
 
 	public static void main(String[] args) {
 
-		
 		m1();
 		System.out.println();
 		m2();
-		
+
 	}
 
 	private static void m2() {
@@ -24,7 +21,7 @@ public class AVLRunner {
 		t.insert(19);
 		t.insert(16);
 		t.display();
-		
+
 	}
 
 	private static void m1() {
